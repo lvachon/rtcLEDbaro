@@ -1,0 +1,51 @@
+ERC report (8/26/2017 9:20:03 PM, Encoding UTF8 )
+
+***** Sheet /
+ErrType(3): Pin connected to some others pins but no pin to drive it
+    @ (106.68 mm,90.17 mm): Pin 1 (Power input) of component #PWR02 is not driven (Net 24).
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (247.65 mm,115.57 mm): Pin 15 (Input) of component U7 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (245.11 mm,115.57 mm): Pin 16 (Input) of component U7 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (250.19 mm,115.57 mm): Pin 14 (Input) of component U7 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (252.73 mm,115.57 mm): Pin 13 (Input) of component U7 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (260.35 mm,134.62 mm): Pin 14 (Input) of component UM1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (273.05 mm,134.62 mm): Pin 19 (Input) of component UM1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (270.51 mm,134.62 mm): Pin 18 (Input) of component UM1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (267.97 mm,134.62 mm): Pin 17 (Input) of component UM1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (265.43 mm,134.62 mm): Pin 16 (Input) of component UM1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (262.89 mm,134.62 mm): Pin 15 (Input) of component UM1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (257.81 mm,134.62 mm): Pin 13 (Input) of component UM1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (275.59 mm,134.62 mm): Pin 20 (Input) of component UM1 is unconnected.
+ErrType(3): Pin connected to some others pins but no pin to drive it
+    @ (121.92 mm,91.44 mm): Pin 8 (Power input) of component U1 is not driven (Net 46).
+ErrType(3): Pin connected to some others pins but no pin to drive it
+    @ (237.49 mm,45.72 mm): Pin 3 (Input) of component UArd1 is not driven (Net 47).
+ErrType(3): Pin connected to some others pins but no pin to drive it
+    @ (214.63 mm,41.91 mm): Pin 25 (Input) of component UArd1 is not driven (Net 50).
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (214.63 mm,45.72 mm): Pin 28 (Input) of component UArd1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (214.63 mm,33.02 mm): Pin 18 (Tri-state) of component UArd1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (214.63 mm,31.75 mm): Pin 17 (Power output) of component UArd1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (214.63 mm,43.18 mm): Pin 26 (Input) of component UArd1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (214.63 mm,30.48 mm): Pin 16 (Tri-state) of component UArd1 is unconnected.
+ErrType(2): Pin not connected (and no connect symbol found on this pin)
+    @ (214.63 mm,48.26 mm): Pin 30 (Power input) of component UArd1 is unconnected.
+ErrType(3): Pin connected to some others pins but no pin to drive it
+    @ (237.49 mm,34.29 mm): Pin 12 (Input) of component UArd1 is not driven (Net 60).
+
+ ** ERC messages: 23  Errors 0  Warnings 23
