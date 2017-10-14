@@ -68,13 +68,12 @@ const unsigned char matdig[10][8]={{0b0110,0b1001,0b1001,0b1001,0b1001,0b1001,0b
                                    {0b0110,0b1001,0b1001,0b0111,0b0001,0b0001,0b1001,0b0110}}; 
 
 
-
 void setup() {
   // put your setup code here, to run once:
- //Serial.begin(9600);
+  //Serial.begin(9600);
   bmp.begin();
   rtc.begin();
- 
+  now=rtc.now();
   sev.begin(0x70);
   sev.setBrightness(32);
   for(int i=0;i<ROW_COUNT;i++){
@@ -93,11 +92,8 @@ void setup() {
 
 void setCathodeAddress(int addr){
   addr=cathmap[addr];
-  digitalWrite(C_0,addr&1);
-  digitalWrite(C_1,addr&2);
-  digitalWrite(C_2,addr&4);
-  digitalWrite(C_3,addr&8);
-
+  PORTC&=0b11110000;
+  PORTC+=(addr&0b1111); 
 }
 
 void set7(int char_addr, int digit,boolean point){
@@ -151,6 +147,7 @@ void logTemp(){
 }
 
 void checkButtons(){
+  
   int b=0;
   noInterrupts();
   for(int i=9;i<13;i++){
@@ -178,32 +175,36 @@ void checkButtons(){
       break; 
     case 4:
       mode=MODE_BARO;
+      fifoToMatrix(pdot,bmin,bmax);
       break; 
     case 5:
       mode=MODE_TEMP;
+      fifoToMatrix(tdot,tmin,tmax);
       break; 
   }  
 }
 
 void loop() {
   count++;
-  if(!(count%1024)){
-    blankMatrix();
+  if(!(count%300)){
+    //blankMatrix();
     checkButtons();
+    int os=now.second();
     now = rtc.now();
+    
     switch (mode%MODE_COUNT){
       case MODE_TEMP:
-        fifoToMatrix(tdot,tmin,tmax);
         showTemp7();
         break;
       case MODE_BARO:
-        fifoToMatrix(pdot,bmin,bmax);
         showBaro7();
         break;
       case MODE_TIME:
       default:
-        showTimeMatrix();
-        showTime7();
+        if(now.second()!=os){
+          showTimeMatrix();
+          showTime7();
+        }
         break;
     }
   }
@@ -211,13 +212,9 @@ void loop() {
     switch (mode){
       case MODE_BARO:
         baro = bmp.readPressure()*0.0002953;
-        fifoToMatrix(pdot,bmin,bmax);
-        showBaro7();
         break;
       case MODE_TEMP:
         temp = bmp.readTemperature()*9/5+32;
-        fifoToMatrix(tdot,tmin,tmax);
-        showTemp7();
         break;
       case MODE_TIME:
       default:
@@ -229,4 +226,5 @@ void loop() {
     count=0;
   }
   drawMatrixRow(count%8);
+  delayMicroseconds(1000);
 }
