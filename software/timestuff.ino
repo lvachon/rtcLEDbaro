@@ -64,7 +64,7 @@ void timeMatrix2(){
   int a = now.second()/10;
   int b = now.second()%10;
   for(int i=0;i<8;i++){
-    matrix[i]=matdig[a][7-i]<<4|matdig[b][7-i];
+    matrix[i]=matchar[a][7-i]<<4|matchar[b][7-i];
   }
 }
 
@@ -104,14 +104,6 @@ void timeMatrix4(){
   matrix[6]=0;
   matrix[7]=0;
   int a = now.second();
-  /*if(a%2){
-    matrix[3]=0b00011000;
-    matrix[4]=0b00011000;
-     
-  }else{
-     matrix[3]=0;
-     matrix[4]=0;
-  }*/
   if(a==0){a=60;} 
   int x=5;
   int y=4;
@@ -143,6 +135,74 @@ void timeMatrix4(){
   }
 }
 
+const char *num_words[] = {"OH","ONE","TWO","THREE","FOUR","FIVE","SIX","SEVEN","EIGHT","NINE","TEN","ELEVEN","TWELVE","THIRTEEN","FOURTEEN","FIFTEEN","SIXTEEN","SEVENTEEN","EIGHTEEN","NINETEEN"};
+const char *pow_ten_words[] = {"TWENTY","THIRTY","FOURTY","FIFTY"};
+
+
+void timeMatrix5(){
+  int h = now.hour();
+  if(h>12){h-=12;}
+  if(h==0){h=12;}
+  char hour_word[12];
+  strcpy(hour_word,num_words[h]);
+  int m = now.minute();
+  char min_word0[12];
+  char min_word1[12];
+  if(m==0){
+    strcpy(min_word0,"OCLOCK");
+    strcpy(min_word1,"");
+  }else{
+    if(m<10){
+      strcpy(min_word0,"OH");
+      strcpy(min_word1,num_words[m]);
+    }else{
+      if(m<20){
+        strcpy(min_word0,num_words[m]);
+        strcpy(min_word1,"");
+      }else{
+        strcpy(min_word0,pow_ten_words[m/10-2]);
+        if((m%10)==0){
+          strcpy(min_word1,"");
+        }else{
+          strcpy(min_word1,num_words[m%10]);
+        }
+      }
+    }
+  }
+  char ampm[3];
+  if(now.hour()>=12){strcpy(ampm,"PM");}else{strcpy(ampm,"AM");}
+  char phrase[50];
+  strcpy(phrase,"  ");
+  strcat(phrase,hour_word);
+  strcat(phrase," ");
+  strcat(phrase,min_word0);
+  strcat(phrase," ");
+  strcat(phrase,min_word1);
+  strcat(phrase," ");
+  strcat(phrase,ampm);
+  strcat(phrase,"   ");
+ 
+  int pixlen=(strlen(phrase)-2)*5;
+  int offset=(count/100)%pixlen;
+  unsigned int rows[8];
+  char c0,c1,c2;
+  c0=phrase[offset/4]-48;
+  c1=phrase[offset/4+1]-48;
+  c2=phrase[offset/4+2]-48;
+  if(c0>9){c0-=7;}
+  if(c1>9){c1-=7;}
+  if(c2>9){c2-=7;}
+  if(c0<0){c0=37;}
+  if(c1<0){c1=37;}
+  if(c2<0){c2=37;}
+  for(int i=0;i<8;i++){
+    
+    rows[i]=matchar[c0][7-i]<<(offset%4+8)|matchar[c1][7-i]<<(offset%4+4)|matchar[c2][7-i]<<(offset%4);
+    rows[i]=rows[i]>>4;
+    matrix[i]=rows[i];
+  }
+}
+
 
 void showTimeMatrix(){
   switch(timemode){
@@ -150,13 +210,19 @@ void showTimeMatrix(){
       timeMatrix0();
       break;
     case 1:
-      timeMatrix2();
+      timeMatrix1();
       break;
     case 2:
-      timeMatrix3();
+      timeMatrix2();
       break;
     case 3:
+      timeMatrix3();
+      break;
+    case 4:
       timeMatrix4();
+      break;
+    case 5:
+      timeMatrix5();
       break;
   }
 }

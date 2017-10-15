@@ -18,7 +18,6 @@ Adafruit_7segment sev = Adafruit_7segment();
 
 DateTime now;
 
-#define B_SENSE 20
 #define C_0 A0
 #define C_1 A1
 #define C_2 A2
@@ -29,14 +28,11 @@ DateTime now;
 #define CHAR_3 4
 #define COL_COUNT 4
 #define ROW_COUNT 8
-#define BTN_1 12
-#define BTN_2 13
-#define BTN_3 14
 #define MODE_COUNT 10
 #define MODE_TIME 0
 #define MODE_BARO 1
 #define MODE_TEMP 3
-#define MODE_BATT 2
+
 
 //const int cathmap[] = {3,2,1,0,4,5,6,7};
 const int cathmap[] = {7,6,5,4,0,1,2,3,8,9,10,11,12,13,14,15};
@@ -65,7 +61,47 @@ const unsigned char matdig[10][8]={{0b0110,0b1001,0b1001,0b1001,0b1001,0b1001,0b
                                    {0b0110,0b1001,0b1000,0b1110,0b1001,0b1001,0b1001,0b0110},
                                    {0b1111,0b1001,0b0001,0b0010,0b0010,0b0100,0b0100,0b0100},
                                    {0b0110,0b1001,0b1001,0b0110,0b1001,0b1001,0b1001,0b0110},
-                                   {0b0110,0b1001,0b1001,0b0111,0b0001,0b0001,0b1001,0b0110}}; 
+                                   {0b0110,0b1001,0b1001,0b0111,0b0001,0b0001,0b1001,0b0110}};
+const unsigned char matchar[38][8]={
+                                    {0,4,10,10,10,10,4,0}
+                                    ,{0,12,4,4,4,4,14,0}
+                                    ,{0,12,2,4,4,8,14,0}
+                                    ,{0,12,2,4,2,2,12,0}
+                                    ,{0,10,10,10,14,2,2,0}
+                                    ,{0,14,8,12,2,2,12,0}
+                                    ,{0,6,8,12,10,10,4,0}
+                                    ,{0,14,2,2,4,4,8,0}
+                                    ,{0,4,10,4,10,10,4,0}
+                                    ,{0,4,10,10,6,2,12,0}
+                                    ,{0,4,10,10,14,10,10,0}
+                                    ,{0,12,10,12,10,10,12,0}
+                                    ,{0,6,8,8,8,8,6,0}
+                                    ,{0,12,10,10,10,10,12,0}
+                                    ,{0,14,8,12,8,8,14,0}
+                                    ,{0,14,8,12,8,8,8,0}
+                                    ,{0,6,8,8,10,10,6,0}
+                                    ,{0,10,10,14,10,10,10,0}
+                                    ,{0,14,4,4,4,4,14,0}
+                                    ,{0,6,2,2,2,2,12,0}
+                                    ,{0,10,10,12,10,10,10,0}
+                                    ,{0,8,8,8,8,8,14,0}
+                                    ,{0,10,14,14,14,10,10,0}
+                                    ,{0,12,10,10,10,10,10,0}
+                                    ,{0,4,10,10,10,10,4,0}
+                                    ,{0,12,10,10,12,8,8,0}
+                                    ,{0,4,10,10,10,4,4,0}
+                                    ,{0,12,10,10,12,10,10,0}
+                                    ,{0,6,8,4,2,2,12,0}
+                                    ,{0,14,4,4,4,4,4,0}
+                                    ,{0,10,10,10,10,10,4,0}
+                                    ,{0,10,10,10,10,4,4,0}
+                                    ,{0,10,10,14,14,14,4,0}
+                                    ,{0,10,10,4,4,10,10,0}
+                                    ,{0,10,10,10,4,4,4,0}
+                                    ,{0,14,2,4,4,8,14,0}
+                                    ,{0,0,0,4,0,4,0,0}
+                                    ,{0,0,0,0,0,0,0,0}
+};
 
 
 void setup() {
@@ -172,12 +208,20 @@ void checkButtons(){
     case 3:
       mode=MODE_TIME;
       timemode=3;
-      break; 
+      break;
     case 4:
+      mode=MODE_TIME;
+      timemode=4;
+      break; 
+    case 5:
+      mode=MODE_TIME;
+      timemode=5;
+      break;  
+    case 6:
       mode=MODE_BARO;
       fifoToMatrix(pdot,bmin,bmax);
       break; 
-    case 5:
+    case 7:
       mode=MODE_TEMP;
       fifoToMatrix(tdot,tmin,tmax);
       break; 
@@ -186,7 +230,7 @@ void checkButtons(){
 
 void loop() {
   count++;
-  if(!(count%300)){
+  if(!(count%100)){
     //blankMatrix();
     checkButtons();
     int os=now.second();
@@ -201,7 +245,7 @@ void loop() {
         break;
       case MODE_TIME:
       default:
-        if(now.second()!=os){
+        if(os!=now.second()||timemode==5){
           showTimeMatrix();
           showTime7();
         }
@@ -226,5 +270,5 @@ void loop() {
     count=0;
   }
   drawMatrixRow(count%8);
-  delayMicroseconds(1000);
+  delayMicroseconds(500);
 }
