@@ -4,15 +4,20 @@ void blankMatrix(){
 }
 
 void fifoToMatrix(float *array,float fmin,float fmax){
-  int val;
+  int val,index;
+ 
   for(int i=0;i<8;i++){
-    if(array[i]==0){val=0;}else{
-      val = 8*(array[i]-fmin)/(fmax-fmin);
+    index = (32-8*gstep)+i*gstep;
+    if(array[index]==0){
+      val=-1;
+    }else{
+      val = 8*(array[index]-fmin)/(fmax-fmin);
     }
     for(int j=0;j<8;j++){
       setMatrixPixel(j,7-i,j<=val);
     }
   }
+  Serial.println(" ");
 }
 
 

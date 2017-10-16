@@ -40,8 +40,9 @@ const int rowpins[] = {2,3,4,5,6,7,8,9};
 const int colpins[] = {C_0,C_1,C_2,C_3};
 const unsigned char sevenSegments[] = {0x3F,0x06,0x5B,0x27,0x66,0x6D,0x7D,0x07,0x7F,0x67};
 unsigned char matrix[8] = {0,1,3,7,15,31,63,127};
-float tdot[8] = {0,0,0,0,0,0,0,0};
-float pdot[8] = {0,0,0,0,0,0,0,0};
+float tdot[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+float pdot[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int gstep=1;
 float tmax=-99999;
 float tmin=99999;
 float bmax=-99999;
@@ -108,7 +109,7 @@ const unsigned char matchar[38][8]={
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  //Serial.begin(9600);
   bmp.begin();
   rtc.begin();
   now=rtc.now();
@@ -162,32 +163,41 @@ void showTemp7(){
 
 void logBaro(){
   baro = bmp.readPressure()*0.0002953;
-  fifoIn(pdot,baro,8);
+  fifoIn(pdot,baro,32);
   bmax=-9999;
   bmin=9999;
-  for(int i=0;i<8;i++){
+  for(int i=0;i<32;i++){
+    Serial.print(pdot[i]);
+    Serial.print(",");
     if(pdot[i]>bmax && pdot[i]!=0){bmax=pdot[i];}
     if(pdot[i]<bmin && pdot[i]!=0){bmin=pdot[i];}
   }
+  Serial.print("    ");
+  Serial.print(bmax);
+  Serial.print(",");
+  Serial.print(bmin);
+  Serial.println(" ");
   if(bmin==bmax){bmin-=0.01;bmax+=0.01;}
+  if(mode==MODE_BARO){fifoToMatrix(pdot,bmin,bmax);}
 }
 
 void logTemp(){
   temp = bmp.readTemperature()*9/5+32;
-  fifoIn(tdot,temp,8);
+  fifoIn(tdot,temp,32);
   tmax=-9999;
   tmin=9999;
-  for(int i=0;i<8;i++){
+  for(int i=0;i<32;i++){
     if(tdot[i]>tmax && tdot[i]!=0){tmax=tdot[i];}
     if(tdot[i]<tmin && tdot[i]!=0){tmin=tdot[i];}
   }
   if(tmin==tmax){tmin-=0.01;tmax+=0.01;}
+  if(mode==MODE_TEMP){fifoToMatrix(tdot,tmin,tmax);}
 }
 
 void checkButtons(){
   
   int b=0;
-  
+  int omode = mode;
   noInterrupts();
   for(int i=9;i<13;i++){
     setCathodeAddress(i);
@@ -234,58 +244,68 @@ void checkButtons(){
       break;  
     case 6:
       mode=MODE_BARO;
-      fifoToMatrix(pdot,bmin,bmax);
+      if(mode!=omode){
+        fifoToMatrix(pdot,bmin,bmax);
+        showBaro7();
+      }
+      
+      if(plus && gstep>1){gstep--;fifoToMatrix(pdot,bmin,bmax);}
+      if(minus && gstep<4){gstep++;fifoToMatrix(pdot,bmin,bmax);}
+      if(plus && minus){gstep=1;fifoToMatrix(pdot,bmin,bmax);}
       break; 
     case 7:
       mode=MODE_TEMP;
-      fifoToMatrix(tdot,tmin,tmax);
+      if(mode!=omode){
+        showTemp7();
+        fifoToMatrix(tdot,tmin,tmax);
+      }
+      if(plus && gstep>1){gstep--;fifoToMatrix(tdot,tmin,tmax);}
+      if(minus && gstep<4){gstep++;fifoToMatrix(tdot,tmin,tmax);}
+      if(plus && minus){gstep=1;fifoToMatrix(tdot,tmin,tmax);}
       break; 
   }  
 }
-
+int os=0;
 void loop() {
-  count++;
-  if(!(count%100)){
-    //blankMatrix();
-    if(!(count%1000)){
-      checkButtons();
-    }
-    int os=now.second();
+  if(!(count%521)){
+    checkButtons();
+    os=now.second();
     now = rtc.now();
-    
-    switch (mode%MODE_COUNT){
-      case MODE_TEMP:
-        showTemp7();
-        break;
-      case MODE_BARO:
-        showBaro7();
-        break;
-      case MODE_TIME:
-      default:
-        if(os!=now.second()||timemode==5){
-          showTimeMatrix();
-          showTime7();
-        }
-        break;
-    }
+    if(now.unixtime()>ltime+30){logBaro();logTemp();ltime=now.unixtime();}
   }
-  if(!(count%32768)){
-    switch (mode){
-      case MODE_BARO:
-        baro = bmp.readPressure()*0.0002953;
-        break;
-      case MODE_TEMP:
+  switch (mode){
+    case MODE_TIME:
+      switch(timemode){
+        case 5:
+          if(!(count%97)){
+            showTimeMatrix();
+            showTime7();
+          }
+          break;
+        default:
+          if(!(count%491)){
+            if(now.second()!=os){
+              showTimeMatrix();
+              showTime7();
+            }
+          }
+      }
+      break;
+    case MODE_TEMP:
+      if(!(count%10000)){
         temp = bmp.readTemperature()*9/5+32;
-        break;
-      case MODE_TIME:
-      default:
-        showTimeMatrix();
-        showTime7();
-        break;
-    }
-    if(now.unixtime()>ltime+300){logBaro();logTemp();ltime=now.unixtime();}
-    
+        showTemp7();
+      }
+    break;
+    case MODE_BARO:
+      if(!(count%10000)){
+        baro = bmp.readPressure()*0.0002953;
+        showBaro7();
+      }
   }
+ 
+  count++;
+
   drawMatrixRow(count%8);
   delayMicroseconds(500);
 }
