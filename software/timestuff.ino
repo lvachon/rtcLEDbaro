@@ -178,12 +178,12 @@ void timeMatrix5(){
   strcat(phrase,min_word0);
   strcat(phrase," ");
   strcat(phrase,min_word1);
-  strcat(phrase," ");
+  if(strlen(min_word1)>0){strcat(phrase," ");}
   strcat(phrase,ampm);
   strcat(phrase,"   ");
  
-  int pixlen=(strlen(phrase)-2)*5;
-  int offset=(count/100)%pixlen;
+  int pixlen=(strlen(phrase)-3)*4;
+  int offset=(count/speed_div)%pixlen;
   unsigned int rows[8];
   char c0,c1,c2;
   c0=phrase[offset/4]-48;

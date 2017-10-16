@@ -1,9 +1,6 @@
 void blankMatrix(){
   PORTD&=0b00000011;
   PORTB&=0b11111100;
-  /*for(int i=0;i<ROW_COUNT;i++){
-    digitalWrite(rowpins[i],LOW);
-  }*/
 }
 
 void fifoToMatrix(float *array,float fmin,float fmax){
@@ -22,22 +19,17 @@ void fifoToMatrix(float *array,float fmin,float fmax){
 void drawMatrixRow(int row){
   PORTD&=0b00000011;
   PORTB&=0b11111100;
-  
-  
-  /*for(int i=0;i<8;i++){
-    digitalWrite(rowpins[i],LOW);
-  }*/
   setCathodeAddress(row);
-  /*for(int i=0;i<8;i++){
-    boolean val = (matrix[row]>>i)&1;
-    digitalWrite(rowpins[i],val);
-  }*/
-  
+ 
   PORTD+=(matrix[row]&0b00111111)<<2;
   PORTB+=((matrix[row]&0b11000000)/64);
-  /*Serial.print(matrix[row])
-  Serial.print(",");
-  Serial.print*/
+  
+  if(invert_matrix){
+    PORTD=PORTD^0b11111100;
+    PORTB=PORTB^0b00000011;  
+  }
+  
+
 }
 
 void setMatrixPixel(int row,int col,boolean value){

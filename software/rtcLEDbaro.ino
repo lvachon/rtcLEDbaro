@@ -51,6 +51,8 @@ const float vmax=4.0;
 long count=0;
 int mode=0;
 int timemode=4;
+bool invert_matrix=false;
+int speed_div=100;
 unsigned long ltime=0;
 const unsigned char matdig[10][8]={{0b0110,0b1001,0b1001,0b1001,0b1001,0b1001,0b1001,0b0110},
                                    {0b0010,0b0110,0b1010,0b0010,0b0010,0b0010,0b0010,0b1111},
@@ -106,7 +108,7 @@ const unsigned char matchar[38][8]={
 
 void setup() {
   // put your setup code here, to run once:
-  //Serial.begin(9600);
+  Serial.begin(9600);
   bmp.begin();
   rtc.begin();
   now=rtc.now();
@@ -185,37 +187,50 @@ void logTemp(){
 void checkButtons(){
   
   int b=0;
+  
   noInterrupts();
   for(int i=9;i<13;i++){
     setCathodeAddress(i);
     b = b*2+(analogRead(A6)<400);
   }
+  setCathodeAddress(8);
+  bool minus=(analogRead(A6)<400);
+  setCathodeAddress(13);
+  bool plus=(analogRead(A6)<400);
   interrupts();
   switch (b){
     case 0:
     default:
       mode=MODE_TIME;
       timemode=0;
+      if(plus || minus){invert_matrix=!invert_matrix;}
       break; 
     case 1:
       mode=MODE_TIME;
       timemode=1;
+      if(plus || minus){invert_matrix=!invert_matrix;}
       break; 
     case 2:
       mode=MODE_TIME;
       timemode=2;
+      if(plus || minus){invert_matrix=!invert_matrix;}
       break; 
     case 3:
       mode=MODE_TIME;
       timemode=3;
+      if(plus || minus){invert_matrix=!invert_matrix;}
       break;
     case 4:
       mode=MODE_TIME;
       timemode=4;
+      if(plus || minus){invert_matrix=!invert_matrix;}
       break; 
     case 5:
       mode=MODE_TIME;
       timemode=5;
+      if(minus){speed_div+=10;}
+      if(plus && speed_div>10){speed_div-=10;}
+      if(minus && plus){speed_div=100;}
       break;  
     case 6:
       mode=MODE_BARO;
@@ -232,7 +247,9 @@ void loop() {
   count++;
   if(!(count%100)){
     //blankMatrix();
-    checkButtons();
+    if(!(count%1000)){
+      checkButtons();
+    }
     int os=now.second();
     now = rtc.now();
     
@@ -252,7 +269,7 @@ void loop() {
         break;
     }
   }
-  if(count>32768){
+  if(!(count%32768)){
     switch (mode){
       case MODE_BARO:
         baro = bmp.readPressure()*0.0002953;
@@ -267,7 +284,7 @@ void loop() {
         break;
     }
     if(now.unixtime()>ltime+300){logBaro();logTemp();ltime=now.unixtime();}
-    count=0;
+    
   }
   drawMatrixRow(count%8);
   delayMicroseconds(500);
