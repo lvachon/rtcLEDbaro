@@ -17,7 +17,6 @@ void fifoToMatrix(float *array,float fmin,float fmax){
       setMatrixPixel(j,7-i,j<=val);
     }
   }
-  Serial.println(" ");
 }
 
 

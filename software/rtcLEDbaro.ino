@@ -271,7 +271,7 @@ void loop() {
     checkButtons();
     os=now.second();
     now = rtc.now();
-    if(now.unixtime()>ltime+30){logBaro();logTemp();ltime=now.unixtime();}
+    if(now.unixtime()>ltime+300){logBaro();logTemp();ltime=now.unixtime();}
   }
   switch (mode){
     case MODE_TIME:
