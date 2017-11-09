@@ -204,6 +204,38 @@ void timeMatrix5(){
 }
 
 
+void timeMatrixSet(timemode){
+  
+  char phrase[10];
+  strcpy(phrase,"  ");
+  if(timemode==6){
+    strcat(phrase,"hour");
+  }else{
+    strcat(phrase,"minute");
+  }
+  strcat(phrase,"   ");
+ 
+  int pixlen=(strlen(phrase)-3)*4;
+  int offset=(count/speed_div)%pixlen;
+  unsigned int rows[8];
+  char c0,c1,c2;
+  c0=phrase[offset/4]-48;
+  c1=phrase[offset/4+1]-48;
+  c2=phrase[offset/4+2]-48;
+  if(c0>9){c0-=7;}
+  if(c1>9){c1-=7;}
+  if(c2>9){c2-=7;}
+  if(c0<0){c0=37;}
+  if(c1<0){c1=37;}
+  if(c2<0){c2=37;}
+  for(int i=0;i<8;i++){
+    
+    rows[i]=matchar[c0][7-i]<<(offset%4+8)|matchar[c1][7-i]<<(offset%4+4)|matchar[c2][7-i]<<(offset%4);
+    rows[i]=rows[i]>>4;
+    matrix[i]=rows[i];
+  }
+}
+
 void showTimeMatrix(){
   switch(timemode){
     case 0:
@@ -223,6 +255,10 @@ void showTimeMatrix(){
       break;
     case 5:
       timeMatrix5();
+      break;
+    case 6:
+    case 7:
+      timeMatrixSet(timemode);
       break;
   }
 }

@@ -263,6 +263,27 @@ void checkButtons(){
       if(minus && gstep<4){gstep++;fifoToMatrix(tdot,tmin,tmax);}
       if(plus && minus){gstep=1;fifoToMatrix(tdot,tmin,tmax);}
       break; 
+    case 8:
+      mode=MODE_TIME;
+      timemode=6;
+      if(minus){
+        rtc.adjust(rtc.now() + TimeSpan(0,-1,0,0));
+      }
+      if(plus){
+        rtc.adjust(rtc.now() + TimeSpan(0,1,0,0));
+      }
+      break;
+    case 9:
+      mode=MODE_TIME;
+      timemode=7;
+      if(minus){
+        rtc.adjust(rtc.now() + TimeSpan(0,0,-1,0));
+      }
+      if(plus){
+        rtc.adjust(rtc.now() + TimeSpan(0,0,1,0));
+      }
+      break;
+
   }  
 }
 int os=0;
