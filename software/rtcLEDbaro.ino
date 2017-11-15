@@ -262,7 +262,7 @@ void checkButtons(){
       if(plus && gstep>1){gstep--;fifoToMatrix(tdot,tmin,tmax);}
       if(minus && gstep<4){gstep++;fifoToMatrix(tdot,tmin,tmax);}
       if(plus && minus){gstep=1;fifoToMatrix(tdot,tmin,tmax);}
-      break; 
+      break;
     case 8:
       mode=MODE_TIME;
       timemode=6;
@@ -282,8 +282,7 @@ void checkButtons(){
       if(plus){
         rtc.adjust(rtc.now() + TimeSpan(0,0,1,0));
       }
-      break;
-
+      break; 
   }  
 }
 int os=0;

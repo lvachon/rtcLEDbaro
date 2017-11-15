@@ -203,8 +203,7 @@ void timeMatrix5(){
   }
 }
 
-
-void timeMatrixSet(timemode){
+void timeMatrixSet(int timemode){
   
   char phrase[10];
   strcpy(phrase,"  ");
