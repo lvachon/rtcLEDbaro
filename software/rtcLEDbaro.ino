@@ -297,6 +297,8 @@ void loop() {
     case MODE_TIME:
       switch(timemode){
         case 5:
+        case 6:
+        case 7:
           if(!(count%97)){
             showTimeMatrix();
             showTime7();

@@ -137,7 +137,8 @@ void timeMatrix4(){
 
 const char *num_words[] = {"OH","ONE","TWO","THREE","FOUR","FIVE","SIX","SEVEN","EIGHT","NINE","TEN","ELEVEN","TWELVE","THIRTEEN","FOURTEEN","FIFTEEN","SIXTEEN","SEVENTEEN","EIGHTEEN","NINETEEN"};
 const char *pow_ten_words[] = {"TWENTY","THIRTY","FOURTY","FIFTY"};
-
+const char HOUR[5] = "HOUR";
+const char MINUTE[7] = "MINUTE";
 
 void timeMatrix5(){
   int h = now.hour();
@@ -205,12 +206,12 @@ void timeMatrix5(){
 
 void timeMatrixSet(int timemode){
   
-  char phrase[10];
+  char phrase[20];
   strcpy(phrase,"  ");
   if(timemode==6){
-    strcat(phrase,"hour");
+    strcat(phrase,HOUR);
   }else{
-    strcat(phrase,"minute");
+    strcat(phrase,MINUTE);
   }
   strcat(phrase,"   ");
  
